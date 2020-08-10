@@ -1,278 +1,83 @@
 <style>
-    h2{font-weight:600!important;
-    font-family: 'Montserrat'!important;}
-    #tools{
-        height:850px;
-    }
-    .header-initial{
-        color: #3c3f44;
-        font-size: 22px;
-        font-weight: bold;
-    }
-    .header-title{
-        color: #3c3f44;
-        font-size: 18px;
-        font-weight: bold;
-        margin-left: 15px;
-    }
-    .subtext{
-        font-size:18px;
-        margin-left: 30px;
-    }
-    .block{
-        float:left;
-        height:400px;
-        width:50%;
-        font-family:'Montserrat';
-        text-align:left;
-    }
-
-    .tools-container{
-        height:700px;
-    }
-
-    @media (min-width: 575.99px){
-        .tools-container{
-            height:700px;
-        }
-    }
-    .tools-container{
-        position:relative;
-        background:white;
-        text-align:center;
-        padding:60px 0 0 0;
-        height:1400px;
-        margin-bottom:-25px;
-    }
-
-    @media (max-width: 1000px){
-        .block-image{
-            text-align:center!important;
-            width:100%;
-        }
-        .block-description{
-            display:none!important;
-        }
-    }
-    .block-image{
-        text-align:right;
-    }
-    .block-description{
-        display:block;
-    }
-    .subitem{
-        font-weight: 600;
-        font-size: 20px;
-        margin-left: 20px;
-        margin-right: 10px;
-    }
+.block{
+    margin-top:40px;
+    text-align:center;
+    width:100%;
+    height:100%;
+    font-family:'Montserrat';
+}
 </style>
-<link href="./tools/css/kpi-ui2.css" rel="stylesheet">
-<div class="tools-container" id="tools">
-    <h1 class="head-text">
-        Tools 
-    </h1>
-    <br>
-    <br>
 
-    <!-- Image -->
-    <div style="margin-top: 40px;">
-        <div class="block block-image">
-            <div class="ui" style="float:right;margin-right:100px;">
-                <div class="ui-header">
-                    <div class="ui-header-title">
-                    <span class="ui-header-menu-item ui-header-selected">2017</span> 
-                    <span class="ui-header-menu-item">2018</span> 
-                    <span class="ui-header-menu-item">2019</span> 
+<link href="./tools/css/kpi-ui2.css" rel="stylesheet">
+    <div class="block">
+        <div class="ui">
+            <div class="ui-header">
+                <div class="ui-header-title">
+                <span class="ui-header-menu-item ui-header-selected">2017</span> 
+                <span class="ui-header-menu-item">2018</span> 
+                <span class="ui-header-menu-item">2019</span> 
+                </div>
+                <div class="ui-close" id="popup-close-button">&times</div>
+            </div>
+
+            <div class="ui-body" style="z-index:9;">
+                <div class="ui-tag tag-safe" id="item-1">
+                    <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
+                        <img style="height:100%;width:100%;" src="./tools/svg/sales.png">
                     </div>
-                    <div class="ui-close" id="popup-close-button">&times</div>
+                    <span class="tag-content">
+                        <p style="font-size:14px;">Sales - Nov 2019</p>
+                        <p style="margin-top:3px;">
+                            <span class="tag-value">$827,324</span>
+                            <span class="tag-value-diff" style="color:#6b9c37;">(+2,181)</span>
+                            <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
+                                <path stroke="0" fill="#6b9c37" d="M 0 10 L 10 10 L 5 4"></path>
+                            </svg>
+                        </p>
+                    </span>
                 </div>
 
-                <div class="ui-body" style="z-index:9;">
-                    <div class="ui-tag tag-safe" id="item-1">
-                        <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
-                            <img style="height:100%;width:100%;" src="./tools/svg/sales.png">
-                        </div>
-                        <span class="tag-content">
-                            <p style="font-size:14px;">Sales - Nov 2019</p>
-                            <p style="margin-top:3px;">
-                                <span class="tag-value">$827,324</span>
-                                <span class="tag-value-diff" style="color:#6b9c37;">(+2,181)</span>
-                                <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
-                                    <path stroke="0" fill="#6b9c37" d="M 0 10 L 10 10 L 5 4"></path>
-                                </svg>
-                            </p>
-                        </span>
+                <div class="ui-tag tag-warning" id="item-2">
+                    <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
+                        <img style="height:100%;width:100%;" src="./tools/svg/visitors.png">
                     </div>
+                    <span class="tag-content">
+                        <p style="font-size:14px;">Visitors - Nov 2019</p>
+                        <p style="margin-top:3px;">
+                            <span class="tag-value">4098</span>
+                            <span class="tag-value-diff" style="color:orange;">(+73)</span>
+                            <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
+                                <path stroke="0" fill="orange" d="M 0 10 L 10 10 L 5 4"></path>
+                            </svg>
+                        </p>
+                    </span>
+                </div>
 
-                    <!--
-                        build ui-tag 
-                            -> set tag-warning/danger/safe based on measure and target
-                            -> set id based on counter
-                            -> fill in with values from first row
-                            -> continue with rest of the code
-                    -->
-
-                    <div class="ui-tag tag-warning" id="item-2">
-                        <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
-                            <img style="height:100%;width:100%;" src="./tools/svg/visitors.png">
-                        </div>
-                        <span class="tag-content">
-                            <p style="font-size:14px;">Visitors - Nov 2019</p>
-                            <p style="margin-top:3px;">
-                                <span class="tag-value">4098</span>
-                                <span class="tag-value-diff" style="color:orange;">(+73)</span>
-                                <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
-                                    <path stroke="0" fill="orange" d="M 0 10 L 10 10 L 5 4"></path>
-                                </svg>
-                            </p>
-                        </span>
+                <div class="ui-tag tag-danger" id="item-3">
+                    <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
+                        <img style="height:100%;width:100%;" src="./tools/svg/returns3.png">
                     </div>
-
-                    <div class="ui-tag tag-danger" id="item-3">
-                        <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
-                            <img style="height:100%;width:100%;" src="./tools/svg/returns3.png">
-                        </div>
-                        <span class="tag-content">
-                            <p style="font-size:14px;">Returns - Nov 2019</p>
-                            <p style="margin-top:3px;">
-                                <span class="tag-value">$207</span>
-                                <span class="tag-value-diff" style="color:red;">(-882)</span>
-                                <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
-                                    <path stroke="0" fill="red" d="M 0 10 L 10 10 L 5 4"></path>
-                                </svg>
-                            </p>
-                        </span>
-                    </div>
-                </div> 
+                    <span class="tag-content">
+                        <p style="font-size:14px;">Returns - Nov 2019</p>
+                        <p style="margin-top:3px;">
+                            <span class="tag-value">$207</span>
+                            <span class="tag-value-diff" style="color:red;">(-882)</span>
+                            <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
+                                <path stroke="0" fill="red" d="M 0 10 L 10 10 L 5 4"></path>
+                            </svg>
+                        </p>
+                    </span>
+                </div>
             </div> 
-        </div>
+        </div> 
     </div>
 
-    <script src="./tools/js/kpi-2.js"></script>
-
-    <script>
-        /*
-            const salesKPI = new KPI();
-            salesKPI.name = "Total Sales"; 
-            salesKPI.description = "Sales - Nov 2019";
-            salesKPI.value = 1184;
-            salesKPI.target = 1100;
-
-            const historyData = [{
-                name : "Total Sales",
-                description : "Sales - Nov 2018",
-                value : 1008,
-                target : 900
-            },
-            {
-                name : "Total Sales",
-                description : "Sales - Nov 2017",
-                value : 880,
-                target : 700
-            },
-            {
-                name : "Total Sales",
-                description : "Sales - Nov 2016",
-                value : 743,
-                target : 600
-            },
-            {
-                name : "Total Sales",
-                description : "Sales - Nov 2015",
-                value : 487,
-                target : 300 
-            }];
-            
-            salesKPI.history = historyData;
-            salesKPI.refresh();
-
-
-            const area = document.getElementById('');
-            area.append(salesKPI);
-        
-        */
-
-
-    </script>
+<script src="./tools/js/kpi-2.js"></script>
 
 
 
 
 
 
-
-
-
-<style>
-.button-blue:hover {
-    background-color: white;
-    color: black;
-}
-
-.button-blue {
-    background-color: #333137;
-    color: white;
-    border: 1px solid #333137;
-}
-.button-services {
-    padding: 8px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1.2rem;
-    font-family: 'Montserrat Light';
-    margin: 4px 2px;
-    width: 200px;
-    border-radius: 8px;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    cursor: pointer;
-}
-button {
-    appearance: button;
-    -webkit-writing-mode: horizontal-tb !important;
-    text-rendering: auto;
-    color: -internal-light-dark(buttontext, rgb(170, 170, 170));
-    letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
-    text-indent: 0px;
-    text-shadow: none;
-    display: inline-block;
-    text-align: center;
-    align-items: flex-start;
-    cursor: default;
-    background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));
-    box-sizing: border-box;
-    margin: 0em;
-    font: 400 13.3333px Arial;
-    padding: 1px 6px;
-    border-width: 2px;
-    border-style: outset;
-    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
-    border-image: initial;
-}
-
-
-</style>
-
-    <!-- Description -->
-    <div class="block block-description">
-        <div style="width:400px;">
-            <p class="header-initial">KPI.js</p>
-            <br>
-            <!--<p class="header-title">KPI.js</p>-->
-            <p class="subtext">This tool is part of a series of UI tools to facilitate the development of 
-            data interfaces for the browser with focus on:</p>
-            <p class="subtext"><span class="subitem">></span> easy implementation</p>
-            <p class="subtext"><span class="subitem">></span> mobile responsiveness</p>
-            <p class="subtext"><span class="subitem">></span> aesthetic pleasing design</p>
-            <p class="subtext"><span class="subitem">></span> speed</p>
-            <button class="button-services button-blue" style="margin-top:90px;margin-left:40px;">Project on Github</button>
-        </div>
-    </div>
-
-</div>
 
 

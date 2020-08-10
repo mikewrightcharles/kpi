@@ -8,6 +8,7 @@
     border: 0;
     color: 'black';
     overflow:hidden;
+    margin: 100px auto;
 }
 .ui-header{
     background-color: #434753;
