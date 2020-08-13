@@ -59,6 +59,17 @@
     border-bottom:1px solid rgb(230, 230, 230);
     cursor: pointer;
 }
+.ui-tag-img{
+    width:25px;
+    height:25px;
+    margin:10px 5px 0 20px;
+    float:left;
+}
+.img-tag{
+    height:100%;
+    width:100%;
+    src:"./tools/svg/sales.png";
+}
 .unsafe{
     border-left:2px solid rgb(179, 0, 0);
 }
