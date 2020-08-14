@@ -18,14 +18,13 @@ function * IndexGenerator (index){
     }
 }
 let storageID = new IDStorage();
-//let _itParent = this.IndexGenerator(888);
-//let _itMenu = this.IndexGenerator(299);
+let _itParent = IndexGenerator(888);
+let _itMenu = IndexGenerator(299);
 /*
-console.log("Id generated: "+storage.ids.newID());
 console.log("All: "+ storage.ids.cache);
 */
 
-let data = [{
+const salesData = [{
     title : "July 14th",
     description : "$827,324", 
     state : "safe" 
@@ -38,23 +37,68 @@ let data = [{
     description : "$647,126", 
     state : "safe"
 }]; 
-
 const salesKPI = new KPI();
-salesKPI.load(data);
+salesKPI.load(salesData);
 salesKPI.run();
 
-console.log(salesKPI.id);
-//console.log(salesKPI.itParent);
-//console.log(salesKPI.itMenu);
+
+const visitorsData = [{
+    title : "Week 3",
+    description : "4005", 
+    state : "warning" 
+},{
+    title : "Week 2",
+    description : "3090", 
+    state : "warning" 
+},{
+    title : "Week 1",
+    description : "3011", 
+    state : "warning"
+}];
+const visitorsKPI = new KPI();
+visitorsKPI.load(visitorsData);
+
+
+const returnsData = [{
+    title : "Week 3",
+    description : "$178", 
+    state : "danger" 
+},{
+    title : "Week 2",
+    description : "$125", 
+    state : "danger" 
+},{
+    title : "Week 1",
+    description : "$64", 
+    state : "danger"
+}]; 
+const returnsKPI = new KPI();
+returnsKPI.load(returnsData);
+
+/*
+Features to add:
+---------------
+.load(data) - done
+
+1.select area to add wireframe
+2.append wireframe
+3.create KPIs
+
+
+wireframe class
+- Holds ids of all KPIs
+
+
+*/
+
 
 function KPI(){
     this.data = [];
     this.id = "kpi-"+storageID.ids.newID();
-  //  this.itParent = _itParent;
-  //  this.itMenu = _itMenu;
     this.load = function(dataIn){
         //can process from CSV file here - future update **
         this.data = dataIn; 
+        this.loadTag(this.id, _itParent, _itMenu, this.data);
     };
     this.structure = {
         type : "div",
@@ -181,10 +225,6 @@ function KPI(){
     
     //constructor - manual, look into automatic
     this.run = function(){
-        let itParent = this.IndexGenerator(888);
-        let itMenu = this.IndexGenerator(299);
-
-        this.loadTag(this.id, itParent, itMenu, this.data);
     }
 }
 
