@@ -121,7 +121,9 @@ function KPI(){
     this.build = function (obj, element){
         const newElement = document.createElement(obj.type);
         newElement.setAttribute("class", obj.class);
-        if(obj.other){console.log("this object has other attributes");}
+        if(obj.other){
+       //     console.log("this object has other attributes");
+        }
         if(element){element.append(newElement)}
         if(obj.children){
             for(item of obj.children){
@@ -134,13 +136,13 @@ function KPI(){
     this.state = (value)=>{
         switch(value){
             case "safe":
-                return "./tools/svg/check_green.png"
+                return "./tools/img/check_green.png"
             case "warning":
-                return "./tools/svg/check_warning.png"
+                return "./tools/img/check_warning.png"
             case "danger":
-                return "./tools/svg/check_danger.png"
+                return "./tools/img/check_danger.png"
             default:
-                return "./tools/svg/default.svg"
+                return "./tools/img/check.png"
         }
     }
 
