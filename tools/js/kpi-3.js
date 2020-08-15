@@ -20,97 +20,19 @@ function * IndexGenerator (index){
 let storageID = new IDStorage();
 let _itParent = IndexGenerator(888);
 let _itMenu = IndexGenerator(299);
-/*
-console.log("All: "+ storage.ids.cache);
-*/
 
-const salesData = [{
-    title : "July 14th",
-    description : "$827,324", 
-    state : "safe" 
-},{
-    title : "July 13th",
-    description : "$747,332", 
-    state : "safe" 
-},{
-    title : "July 12th",
-    description : "$647,126", 
-    state : "safe"
-}]; 
 const salesKPI = new KPI();
-salesKPI.load(salesData);
-salesKPI.run();
+salesKPI.load("tools/js/data_file_1.json");
 
 
-const visitorsData = [{
-    title : "Week 3",
-    description : "4005", 
-    state : "warning" 
-},{
-    title : "Week 2",
-    description : "3090", 
-    state : "warning" 
-},{
-    title : "Week 1",
-    description : "3011", 
-    state : "warning"
-}];
 const visitorsKPI = new KPI();
-visitorsKPI.load(visitorsData);
+visitorsKPI.load("tools/js/data_file_2.json");
 
 
-const returnsData = [{
-    title : "Week 3",
-    description : "$178", 
-    state : "danger" 
-},{
-    title : "Week 2",
-    description : "$125", 
-    state : "danger" 
-},{
-    title : "Week 1",
-    description : "$64", 
-    state : "danger"
-}]; 
 const returnsKPI = new KPI();
-returnsKPI.load(returnsData);
+returnsKPI.load("tools/js/data_file_3.json");
 
-/* Add promise here */
-let responseArray = [];
-loadDataFile("tools/js/data_file_1.json");
-function loadDataFile(url){
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-        // Typical action to be performed when the document is ready:
-        let response = JSON.parse(xhttp.responseText);
-        for(item in response){
-                responseArray.push(response[item]);
-        }
-        console.log(responseArray);
-        }
-    };
-    xhttp.open("GET", url, true);
-    xhttp.send();
-}
 
-    /*
-let request = new XMLHttpRequest();
-request.open("GET", "tools/js/data_file_1.json");
-request.onload = function(){
-    console.log("loaded!");
-    try{
-        console.log("loaded!");
-        if(this.status === 200){
-            console.log("status 200");
-            console.log(JSON.parse(this.response));
-        }
-    }catch(e){
-        console.log("error: " + e);
-    }
-};
-
-    */
 /*
 Features to add:
 ---------------
@@ -131,11 +53,38 @@ wireframe class
 function KPI(){
     this.data = [];
     this.id = "kpi-"+storageID.ids.newID();
-    this.load = function(dataIn){
-        //can process from CSV file here - future update **
-        this.data = dataIn; 
-        this.loadTag(this.id, _itParent, _itMenu, this.data);
-    };
+    this.load = function(path){
+        let responseArray = [];
+        loadDataFile(path).then(
+            results=>{
+                this.data = results; 
+                this.loadTag(this.id, _itParent, _itMenu, this.data);
+            }
+        ).catch(error=>{
+            console.log("Oops, error occured:");
+            console.log(error);
+        });
+        function loadDataFile(url){
+            return new Promise((resolve, reject)=>{
+                const request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    try{
+                        if (this.readyState == 4 && this.status == 200) {
+                            let response = JSON.parse(request.responseText);
+                            for(item in response){
+                                    responseArray.push(response[item]);
+                            }
+                            resolve(responseArray);
+                        }
+                    }catch(e){
+                        reject(e.message);
+                    }
+                };
+                request.open("GET", url, true);
+                request.send();
+            });
+        }
+    }
     this.structure = {
         type : "div",
         class : "ui-tag-expand-item",
@@ -270,8 +219,6 @@ function KPI(){
     ==================
     FUTURE DEVELOPMENT
     ==================
-    **New Features
-
 
     const salesKPI = new KPI();
     salesKPI.name = "Total Sales"; 
