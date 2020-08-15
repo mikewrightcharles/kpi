@@ -75,6 +75,42 @@ const returnsData = [{
 const returnsKPI = new KPI();
 returnsKPI.load(returnsData);
 
+/* Add promise here */
+let responseArray = [];
+loadDataFile("tools/js/data_file_1.json");
+function loadDataFile(url){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        // Typical action to be performed when the document is ready:
+        let response = JSON.parse(xhttp.responseText);
+        for(item in response){
+                responseArray.push(response[item]);
+        }
+        console.log(responseArray);
+        }
+    };
+    xhttp.open("GET", url, true);
+    xhttp.send();
+}
+
+    /*
+let request = new XMLHttpRequest();
+request.open("GET", "tools/js/data_file_1.json");
+request.onload = function(){
+    console.log("loaded!");
+    try{
+        console.log("loaded!");
+        if(this.status === 200){
+            console.log("status 200");
+            console.log(JSON.parse(this.response));
+        }
+    }catch(e){
+        console.log("error: " + e);
+    }
+};
+
+    */
 /*
 Features to add:
 ---------------
