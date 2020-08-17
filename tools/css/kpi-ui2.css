@@ -68,7 +68,6 @@
 .img-tag{
     height:100%;
     width:100%;
-    src:"./tools/svg/sales.png";
 }
 .unsafe{
     border-left:2px solid rgb(179, 0, 0);

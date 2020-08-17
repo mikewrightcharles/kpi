@@ -32,7 +32,8 @@ visitorsKPI.load("tools/js/data_file_2.json");
 const returnsKPI = new KPI();
 returnsKPI.load("tools/js/data_file_3.json");
 
-
+const testKPI = new KPI();
+testKPI.buildKPI();
 /*
 Features to add:
 ---------------
@@ -51,8 +52,62 @@ wireframe class
 
 
 function KPI(){
+    
+    this.buildKPI = function(){
+        let element = this.build(this.kpiStructure);
+        console.log("KPI structure:");
+        console.log(element);
+        let uiBody = document.getElementsByClassName("ui-body");
+        console.log("UI Body:");
+        console.log(uiBody);
+
+        this.loadKPI("tools/js/data_file_4.json");
+        setTimeout(()=>{
+            console.log(this.data);
+        },2000);
+    };
+
     this.data = [];
+
     this.id = "kpi-"+storageID.ids.newID();
+
+    this.loadKPI = function(path){
+        let responseArray = [];
+        loadDataFile(path).then(
+            results=>{
+                this.data = results; 
+               // this.loadTag(this.id, _itParent, _itMenu, this.data);
+            }
+        ).catch(error=>{
+            console.log("Oops, error occured:");
+            console.log(error);
+        });
+        function loadDataFile(url){
+            return new Promise((resolve, reject)=>{
+                const request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                    try{
+                        if (this.readyState == 4 && this.status == 200) {
+                            let response = JSON.parse(request.responseText);
+                            for(item in response){
+                                    responseArray.push(response[item]);
+                            }
+                            resolve(responseArray);
+                        }
+                    }catch(e){
+                        reject(e.message);
+                    }
+                };
+                request.open("GET", url, true);
+                request.send();
+            });
+        }
+    };
+
+    this.buildKPI = function(){
+
+    };
+
     this.load = function(path){
         let responseArray = [];
         loadDataFile(path).then(
@@ -84,7 +139,62 @@ function KPI(){
                 request.send();
             });
         }
-    }
+    };
+
+
+    this.kpiStructure = {
+        type : "div",
+        class : "ui-tag tag-warning",
+        other : {
+            id : "item-4"
+            /* id gets calculated programatically
+            from IDStorage obj */
+        },
+        children : [{
+            type : "div",
+            class : "ui-tag-img",
+            children : [{
+                type : "img",
+                class : "img-tag",
+                other : {
+                    src : "./tools/img/visitors.png"
+                }
+            }]
+        },{
+            type : "span",
+            class : "tag-content",
+            children : [{
+                type : "p", 
+                class : "measureTitle"
+            },{
+                type : "p",
+                class : "measureValue",
+                children : [{
+                    type : "span",
+                    class : "tag-value"
+                },{
+                    type : "span",
+                    class : "tag-value-diff"
+                    /* style="color:green/orange/red"
+                        depends on target. 
+                        this needs to be set programatically */
+                },{
+                    type : "svg",
+                    class : "measure-arrow",
+                    children : [{
+                        type : "path",
+                        class : "measure-arrow-path"
+                        /* D="M 0 10 L 10 10 L 5 4"
+                            Up or down arrow, 
+                            depends on target. 
+                            this needs to be set programatically */
+                         
+                    }]
+                }]
+            }]
+        }]
+    };
+
     this.structure = {
         type : "div",
         class : "ui-tag-expand-item",
@@ -131,7 +241,7 @@ function KPI(){
             }
         }
         return newElement;
-    }
+    };
 
     this.state = (value)=>{
         switch(value){
@@ -144,7 +254,7 @@ function KPI(){
             default:
                 return "./tools/img/check.png"
         }
-    }
+    };
 
     this.IndexGenerator = function *(index){
         const ui = 99999;
@@ -153,7 +263,7 @@ function KPI(){
         while(true){
             yield --index;
         }
-    }
+    };
 
     this.process = function(element, data){
         const title = element.getElementsByClassName("ui-tag-expand-content-title")[0];
@@ -166,8 +276,10 @@ function KPI(){
         image.src = this.state(data.state);
 
         return element;
-    }
+    };
+
     this.tagSize = 92;
+
     this.expandStyleClass = "";
 
     this.loadTag = function(tagId, itParent, itMenu, dataIn){
@@ -208,11 +320,8 @@ function KPI(){
 
         document.body.append(uiTagStyleTag);
         tag.after(container);
-    }
+    };
     
-    //constructor - manual, look into automatic
-    this.run = function(){
-    }
 }
 
 
