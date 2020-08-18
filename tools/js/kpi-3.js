@@ -33,7 +33,7 @@ const returnsKPI = new KPI();
 returnsKPI.load("tools/js/data_file_3.json");
 
 const testKPI = new KPI();
-testKPI.buildKPI();
+testKPI.start();
 /*
 Features to add:
 ---------------
@@ -48,23 +48,118 @@ wireframe class
 - Holds ids of all KPIs
 
 
+Options:
+--------
+    Target based KPI <- working on
+        - Set target (json or code)
+    History Target based KPI
+        - Colors calculated based on previous measures
+
+    ** For warning range -> kpi.setWarning(100)
+
+    const sales_kpi = new KPI();
+    sales_kpi.load("data_file.json");
+    ** if not in the data file:
+    ** sales_kpi.target = 8928;
+    sales_kpi.warningRange(100);
+    sales_kpi.refresh(60);
+    wireframe.append(sales_kpi);
 */
 
 
 function KPI(){
-    
-    this.buildKPI = function(){
+
+    this.start = function(){
+        console.log("HELLO@@@@");
         let element = this.build(this.kpiStructure);
         console.log("KPI structure:");
         console.log(element);
-        let uiBody = document.getElementsByClassName("ui-body");
-        console.log("UI Body:");
-        console.log(uiBody);
-
         this.loadKPI("tools/js/data_file_4.json");
         setTimeout(()=>{
+            console.log("Data:");
             console.log(this.data);
+            console.log("Let's start to build KPI...");
+            this.addValues(element);
         },2000);
+    };
+
+    this.addValues = function(element){
+
+        /*
+            1 - Grab parent to append KPI 
+            2 - Build KPI using structure
+            3 - add content using this.data
+            4 - append completed element to parent KPI
+        */
+
+        // 1
+        let uiBody = document.getElementsByClassName("ui-body")[0];
+        // 2
+        //let KPI_tag = this.build(this.kpiStructure);
+        //console.log(KPI_tag);
+        // 3 - create addData()
+        element = this.addKPIData(element, this.data[0]);
+        console.log(element);
+        // 4 
+        uiBody.appendChild(element); 
+        
+    };
+
+    this.addKPIData = function(element, data){
+        //add src .png to img class "img-tag"
+
+        const image = element.querySelector("img");
+        image.src = "./tools/img/visitors.png";
+
+        console.log("KPI image:");
+        console.log(image);
+        //measureTitle
+        const titleElement = element.getElementsByClassName("measureTitle")[0];
+        titleElement.innerText = data.title || "";
+        //tag-value ** change data files 'description' to 'value' **
+        const valueElement = element.getElementsByClassName("tag-value")[0];
+        valueElement.innerText = data.value || "";
+        //tag-value-diff ** also change style color
+        const diffElement = element.getElementsByClassName("tag-value-diff")[0];
+
+        //check target in JSON or this.target
+        if(data.target){
+            const arrowElement = element.getElementsByClassName("measure-arrow-path")[0];
+            const differance = data.value - data.target;
+            if(data.value > data.target){
+                //set color green
+                arrowElement.setAttribute("D", "M 0 10 L 10 10 L 5 4");
+                arrowElement.setAttribute("style", "fill:'#6b9c37';stroke:0;");
+                element.setAttribute("style", "border-left: 2px solid #85c990;");
+                diffElement.setAttribute("style", "color:#6b9c37;");
+                diffElement.innerText = differance || "";
+            }else{
+                //set color red
+                //rotate when red **
+                //arrowElement.setAttribute("transform", "rotate(180)");
+                arrowElement.setAttribute("D", "M 0 10 L 10 10 L 5 4");
+                arrowElement.setAttribute("style", "fill:'red';stroke:0;");
+                element.setAttribute("style", "border-left: 2px solid #de7a7a;");
+                diffElement.setAttribute("style", "color:red;");
+                diffElement.innerText = differance || "";
+            }
+        }else{
+            console.log("no target provided");
+        }
+        return element;
+    };
+
+    this.process = function(element, data){
+        const title = element.getElementsByClassName("ui-tag-expand-content-title")[0];
+        title.innerText = data.title || "";
+
+        const description = element.getElementsByClassName("ui-tag-expand-content-desc")[0];
+        description.innerText = data.description || "";
+
+        const image = element.querySelector("img");
+        image.src = this.state(data.state);
+
+        return element;
     };
 
     this.data = [];
@@ -104,10 +199,6 @@ function KPI(){
         }
     };
 
-    this.buildKPI = function(){
-
-    };
-
     this.load = function(path){
         let responseArray = [];
         loadDataFile(path).then(
@@ -144,7 +235,7 @@ function KPI(){
 
     this.kpiStructure = {
         type : "div",
-        class : "ui-tag tag-warning",
+        class : "ui-tag",
         other : {
             id : "item-4"
             /* id gets calculated programatically
@@ -325,115 +416,4 @@ function KPI(){
 }
 
 
-
-/*
-    ==================
-    FUTURE DEVELOPMENT
-    ==================
-
-    const salesKPI = new KPI();
-    salesKPI.name = "Total Sales"; 
-    salesKPI.description = "Sales - Nov 2019";
-    salesKPI.value = 1184;
-    salesKPI.target = 1100;
-
-    const data = [{
-        name : "Total Sales",
-        description : "Sales - Nov 2019",
-        value : 1184,
-        target : 1100 
-    },
-        name : "Total Sales",
-        description : "Sales - Nov 2018",
-        value : 1008,
-        target : 900
-    },
-    {
-        name : "Total Sales",
-        description : "Sales - Nov 2017",
-        value : 880,
-        target : 700
-    },
-    {
-        name : "Total Sales",
-        description : "Sales - Nov 2016",
-        value : 743,
-        target : 600
-    },
-    {
-        name : "Total Sales",
-        description : "Sales - Nov 2015",
-        value : 487,
-        target : 300 
-    }];
-    
-    salesKPI.history = historyData;
-    salesKPI.refresh();
-
-
-    const area = document.getElementById('');
-    area.append(salesKPI);
-
-    -----------------------------------------------
-    data = [{
-        title : "Week 3",
-        description : "4005", 
-        state : "warning" 
-    },{
-        title : "Week 2",
-        description : "3090", 
-        state : "warning" 
-    },{
-        title : "Week 1",
-        description : "3011", 
-        state : "warning"
-    }]; 
-    this.loadTag("item-2", itParent, itMenu, data);
-
-    data = [{
-        title : "Week 3",
-        description : "$178", 
-        state : "danger" 
-    },{
-        title : "Week 2",
-        description : "$125", 
-        state : "danger" 
-    },{
-        title : "Week 1",
-        description : "$64", 
-        state : "danger"
-    }]; 
-    this.loadTag("item-3", itParent, itMenu, data);
-
-    -----------------------------------------------
-
-    const data = [{
-        name : "Total Sales",
-        description : "Sales - Nov 2019",
-        value : 1184,
-        target : 1100 
-    ,
-        name : "Total Sales",
-        description : "Sales - Nov 2018",
-        value : 1008,
-        target : 900
-    ,
-        name : "Total Sales",
-        description : "Sales - Nov 2017",
-        value : 880,
-        target : 700
-    ,
-        name : "Total Sales",
-        description : "Sales - Nov 2016",
-        value : 743,
-        target : 600
-    ,
-        name : "Total Sales",
-        description : "Sales - Nov 2015",
-        value : 487,
-        target : 300 
-    }];
-
-
-*/
 

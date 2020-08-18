@@ -47,6 +47,8 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+/* Tag */
 .ui-tag{
     position: relative;
     z-index:8;
@@ -62,13 +64,54 @@
 .ui-tag-img{
     width:25px;
     height:25px;
-    margin:10px 5px 0 20px;
+    margin-right:5px;
+    margin-top:10px;
+    margin-left:20px;
     float:left;
 }
 .img-tag{
     height:100%;
     width:100%;
 }
+.tag-content{
+    display:block;
+    float:left;
+    margin-left:15px;
+    font-size:22px;
+    text-align:left;
+    font-family:'Roboto';
+}
+.measureTitle{
+    font-size:14px;
+}
+.measureValue{
+    margin-top:3px;
+}
+.tag-value{
+    font-weight: 600;
+    font-size: 1.5rem;
+    display: block;
+    float: left;
+}
+.tag-value-diff{
+    font-size: 9pt;
+    font-weight: 600;
+    display: block;
+    float: left;
+    margin-left:3px;
+}
+.measure-arrow{
+    height:10px;
+    width:10px;
+    float:left;
+    margin-left:3px;
+    margin-top:-1px;
+}
+.measure-arrow-path{
+    stroke:0;
+}
+
+
 .unsafe{
     border-left:2px solid rgb(179, 0, 0);
 }
@@ -147,27 +190,7 @@ p{
 .tag-danger{
     border-left: 2px solid #de7a7a;
 }
-.tag-content{
-    display:block;
-    float:left;
-    margin-left:15px;
-    font-size:22px;
-    text-align:left;
-    font-family:'Roboto';
-}
-.tag-value{
-    font-weight: 600;
-    font-size: 1.5rem;
-    display: block;
-    float: left;
-}
-.tag-value-diff{
-    font-size: 9pt;
-    font-weight: 600;
-    display: block;
-    float: left;
-    margin-left:3px;
-}
+
 .tag-value-diff-arrow{
     height:10px;
     width:10px;
