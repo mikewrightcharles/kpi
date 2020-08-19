@@ -1,3 +1,3 @@
 # kpi.js
 
-![kpi.js](http://michelwright.com/kpi-js-sample.gif)
+![kpi.js](https://wrightanalytics.dev/kpi-js-sample.gif)
