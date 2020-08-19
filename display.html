@@ -8,7 +8,7 @@
 }
 </style>
 
-<link href="./tools/css/kpi-ui2.css" rel="stylesheet">
+<link href="./src/css/ui.css" rel="stylesheet">
     <div class="block">
         <div class="ui">
             <div class="ui-header">
@@ -23,7 +23,7 @@
             <div class="ui-body" style="z-index:9;">
                 <div class="ui-tag tag-safe" id="kpi-1">
                     <div class="ui-tag-img">
-                        <img class="img-tag" style="height:100%;width:100%;" src="./tools/img/sales.png">
+                        <img class="img-tag" style="height:100%;width:100%;" src="./src/img/sales.png">
                     </div>
                     <span class="tag-content">
                         <p style="font-size:14px;">Sales - Nov 2019</p>
@@ -39,7 +39,7 @@
 
                 <div class="ui-tag tag-warning" id="kpi-2">
                     <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
-                        <img style="height:100%;width:100%;" src="./tools/img/visitors.png">
+                        <img style="height:100%;width:100%;" src="./src/img/visitors.png">
                     </div>
                     <span class="tag-content">
                         <p style="font-size:14px;">Visitors - Nov 2019</p>
@@ -55,7 +55,7 @@
 
                 <div class="ui-tag tag-danger" id="kpi-3">
                     <div style="width:25px;height:25px;margin-right:5px;margin-top:10px;margin-left:20px;float:left;">
-                        <img style="height:100%;width:100%;" src="./tools/img/returns3.png">
+                        <img style="height:100%;width:100%;" src="./src/img/returns3.png">
                     </div>
                     <span class="tag-content">
                         <p style="font-size:14px;">Returns - Nov 2019</p>
@@ -63,9 +63,7 @@
                             <span class="tag-value">$207</span>
                             <span class="tag-value-diff" style="color:red;">(-882)</span>
                             <svg height="10px" width="10px" style="float:left;margin-left:3px;margin-top:-1px;">
-                                <g transform="rotate(10)">
-                                    <path stroke="0" fill="red" d="M 0 10 L 10 10 L 5 4"></path>
-                                </g>
+                                <path stroke="0" fill="red" d="M 0 10 L 10 10 L 5 4"></path>
                             </svg>
                         </p>
                     </span>
@@ -73,8 +71,9 @@
             </div> 
         </div> 
     </div>
-
-<script src="./tools/js/kpi-3.js"></script>
+<svg height="100px" width="300px" style="background:red;" id="svg_test_area"></svg>
+<script src="./src/js/svg_tools.js"></script>
+<script src="./src/js/kpi.js"></script>
 
 
 

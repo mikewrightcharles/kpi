@@ -1,3 +1,29 @@
+function DataWireFrame(){
+    this.height = 0;
+    this.width = 0;
+    this.ids = {
+        cache : [],
+        id : 1,
+        newID : function(){
+            let _id = this.id++;
+            this.cache.push("item-" + _id);
+            return _id;
+        }
+    };
+
+    this.IndexGenerator = function * (index){
+        const ui = 99999;
+        const uiHeader = 299;
+        //let index = 299;
+        while(true){
+            yield --index;
+        }
+    };
+    //KPIs get stored here
+}
+ 
+
+
 function IDStorage(){
     this.ids = {
         cache : [],
@@ -22,126 +48,77 @@ let _itParent = IndexGenerator(888);
 let _itMenu = IndexGenerator(299);
 
 const salesKPI = new KPI();
-salesKPI.load("tools/js/data_file_1.json");
+salesKPI.load("src/js/data_file_1.json");
 
 
 const visitorsKPI = new KPI();
-visitorsKPI.load("tools/js/data_file_2.json");
+visitorsKPI.load("src/js/data_file_2.json");
 
 
 const returnsKPI = new KPI();
-returnsKPI.load("tools/js/data_file_3.json");
+returnsKPI.load("src/js/data_file_3.json");
 
 const testKPI = new KPI();
+testKPI.image = "visitors.png";
 testKPI.start();
-/*
-Features to add:
----------------
-.load(data) - done
-
-1.select area to add wireframe
-2.append wireframe
-3.create KPIs
-
-
-wireframe class
-- Holds ids of all KPIs
-
-
-Options:
---------
-    Target based KPI <- working on
-        - Set target (json or code)
-    History Target based KPI
-        - Colors calculated based on previous measures
-
-    ** For warning range -> kpi.setWarning(100)
-
-    const sales_kpi = new KPI();
-    sales_kpi.load("data_file.json");
-    ** if not in the data file:
-    ** sales_kpi.target = 8928;
-    sales_kpi.warningRange(100);
-    sales_kpi.refresh(60);
-    wireframe.append(sales_kpi);
-*/
 
 
 function KPI(){
-
+    this.image = "";
+    this.image_root_folder= "./src/img/";
     this.start = function(){
-        console.log("HELLO@@@@");
         let element = this.build(this.kpiStructure);
-        console.log("KPI structure:");
-        console.log(element);
-        this.loadKPI("tools/js/data_file_4.json");
+        this.loadKPI("src/js/data_file_4.json");
         setTimeout(()=>{
-            console.log("Data:");
-            console.log(this.data);
-            console.log("Let's start to build KPI...");
             this.addValues(element);
         },2000);
     };
 
     this.addValues = function(element){
-
-        /*
-            1 - Grab parent to append KPI 
-            2 - Build KPI using structure
-            3 - add content using this.data
-            4 - append completed element to parent KPI
-        */
-
-        // 1
         let uiBody = document.getElementsByClassName("ui-body")[0];
-        // 2
-        //let KPI_tag = this.build(this.kpiStructure);
-        //console.log(KPI_tag);
-        // 3 - create addData()
         element = this.addKPIData(element, this.data[0]);
-        console.log(element);
-        // 4 
         uiBody.appendChild(element); 
-        
     };
 
     this.addKPIData = function(element, data){
-        //add src .png to img class "img-tag"
+        const thumbnail = element.querySelector("img");
+        thumbnail.src = `${this.image_root_folder}${this.image}`;
 
-        const image = element.querySelector("img");
-        image.src = "./tools/img/visitors.png";
-
-        console.log("KPI image:");
-        console.log(image);
-        //measureTitle
         const titleElement = element.getElementsByClassName("measureTitle")[0];
         titleElement.innerText = data.title || "";
-        //tag-value ** change data files 'description' to 'value' **
         const valueElement = element.getElementsByClassName("tag-value")[0];
         valueElement.innerText = data.value || "";
-        //tag-value-diff ** also change style color
         const diffElement = element.getElementsByClassName("tag-value-diff")[0];
 
         //check target in JSON or this.target
         if(data.target){
-            const arrowElement = element.getElementsByClassName("measure-arrow-path")[0];
-            const differance = data.value - data.target;
-            if(data.value > data.target){
-                //set color green
-                arrowElement.setAttribute("D", "M 0 10 L 10 10 L 5 4");
-                arrowElement.setAttribute("style", "fill:'#6b9c37';stroke:0;");
+            //build arrow
+            const svg = element.getElementsByClassName("measure-arrow")[0];
+            const value = parseInt(data.value); 
+            const target = parseInt(data.target); 
+            const differance = value - target;
+            if(value > target){
+                let arrowElement = new Arrow(5,5,"#6b9c37","up");
+                arrowElement.arrow_height = 7;
+                arrowElement.arrow_width = 9;
+                arrowElement = arrowElement.build();
+
+                svg.append(arrowElement);
+
                 element.setAttribute("style", "border-left: 2px solid #85c990;");
                 diffElement.setAttribute("style", "color:#6b9c37;");
-                diffElement.innerText = differance || "";
+                diffElement.innerText = `(+${differance})` || "";
             }else{
-                //set color red
-                //rotate when red **
-                //arrowElement.setAttribute("transform", "rotate(180)");
-                arrowElement.setAttribute("D", "M 0 10 L 10 10 L 5 4");
-                arrowElement.setAttribute("style", "fill:'red';stroke:0;");
+                let arrowElement = new Arrow(5,5,"red","down");
+                arrowElement.arrow_height = 7;
+                arrowElement.arrow_width = 9;
+                arrowElement = arrowElement.build();
+
+                svg.append(arrowElement);
+
                 element.setAttribute("style", "border-left: 2px solid #de7a7a;");
                 diffElement.setAttribute("style", "color:red;");
-                diffElement.innerText = differance || "";
+                diffElement.innerText = `(${differance})` || "";
             }
         }else{
             console.log("no target provided");
@@ -171,7 +148,6 @@ function KPI(){
         loadDataFile(path).then(
             results=>{
                 this.data = results; 
-               // this.loadTag(this.id, _itParent, _itMenu, this.data);
             }
         ).catch(error=>{
             console.log("Oops, error occured:");
@@ -237,9 +213,7 @@ function KPI(){
         type : "div",
         class : "ui-tag",
         other : {
-            id : "item-4"
-            /* id gets calculated programatically
-            from IDStorage obj */
+            id : "test-kpi"
         },
         children : [{
             type : "div",
@@ -248,7 +222,7 @@ function KPI(){
                 type : "img",
                 class : "img-tag",
                 other : {
-                    src : "./tools/img/visitors.png"
+                    src : ""
                 }
             }]
         },{
@@ -266,21 +240,9 @@ function KPI(){
                 },{
                     type : "span",
                     class : "tag-value-diff"
-                    /* style="color:green/orange/red"
-                        depends on target. 
-                        this needs to be set programatically */
                 },{
                     type : "svg",
-                    class : "measure-arrow",
-                    children : [{
-                        type : "path",
-                        class : "measure-arrow-path"
-                        /* D="M 0 10 L 10 10 L 5 4"
-                            Up or down arrow, 
-                            depends on target. 
-                            this needs to be set programatically */
-                         
-                    }]
+                    class : "measure-arrow"
                 }]
             }]
         }]
@@ -289,7 +251,6 @@ function KPI(){
     this.structure = {
         type : "div",
         class : "ui-tag-expand-item",
-        other : "yes",
         children : [{
             type : "div",
             class : "ui-tag-expand-icon",
@@ -320,9 +281,17 @@ function KPI(){
     };
 
     this.build = function (obj, element){
-        const newElement = document.createElement(obj.type);
+        let newElement = "";
+        if(obj.type === ("svg"||"circle"||"path"||"rect"||"line"||"text")){
+            newElement = document.createElementNS("http://www.w3.org/2000/svg", obj.type);
+        }else{
+            newElement = document.createElement(obj.type);
+        } 
         newElement.setAttribute("class", obj.class);
         if(obj.other){
+            for(item in obj.other){
+                newElement.setAttribute(item, obj.other[item]);
+            }
        //     console.log("this object has other attributes");
         }
         if(element){element.append(newElement)}
@@ -337,13 +306,13 @@ function KPI(){
     this.state = (value)=>{
         switch(value){
             case "safe":
-                return "./tools/img/check_green.png"
+                return "./src/img/check_green.png"
             case "warning":
-                return "./tools/img/check_warning.png"
+                return "./src/img/check_warning.png"
             case "danger":
-                return "./tools/img/check_danger.png"
+                return "./src/img/check_danger.png"
             default:
-                return "./tools/img/check.png"
+                return "./src/img/check.png"
         }
     };
 
