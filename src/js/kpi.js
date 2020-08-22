@@ -1,3 +1,5 @@
+(()=>{
+
 function DataWireFrame(){
     this.height = 0;
     this.width = 0;
@@ -43,12 +45,18 @@ function * IndexGenerator (index){
         yield --index;
     }
 }
+/**Setting up the environment */
 let storageID = new IDStorage();
 let _itParent = IndexGenerator(888);
 let _itMenu = IndexGenerator(299);
 
+let uiTagStyleTag = document.createElement("style");
+uiTagStyleTag.innerText = '.ui-tag-expand-after{margin-top:0!important;}.ui-tag-expand-item{box-sizing: border-box;height:92px!important;}';
+document.body.append(uiTagStyleTag);
+
 const salesKPI = new KPI();
 salesKPI.image = "sales.png";
+salesKPI.type = "Money";
 salesKPI.load("data_file_4.json");
 
 const visitorsKPI = new KPI();
@@ -58,6 +66,7 @@ visitorsKPI.load("data_file_2.json");
 
 const returnsKPI = new KPI();
 returnsKPI.image = "returns3.png";
+returnsKPI.type = "Money";
 returnsKPI.load("data_file_3.json");
 
 function KPI(){
@@ -76,10 +85,6 @@ function KPI(){
     this.kpi_history_style = "";
 
     this.load = function(file){
-        //building kpi tag and returning an element
-
-        //pulling data from file
-        //this.loadKPI(`${this.root}${file}`);
 
         this.loadFile(`${this.root}${file}`).then(
             results=>{
@@ -87,8 +92,8 @@ function KPI(){
                 this.kpi_data = results.shift();
                 this.history_data = results;
 
-                //this.addValues(this.element);
                 this.element = this.build(this.kpiStructure);
+                this.kpi_style += `z-index:${_itParent.next().value};`;
                 this.element = this.addData(this.element, this.kpi_data);
                 this.element.id = this.id;
 
@@ -98,14 +103,14 @@ function KPI(){
 
                 //load history
                 this.historyElement = this.build(this.structure);
-                this.loadTag();
+                this.loadHistory();
 
             }
         ).catch(error=>{
             console.log(`Oops, error occured: ${error}`);
         });
     };
-
+    this.type = "";
 
     this.addData = function(element, data){
         const thumbnail = element.querySelector("img");
@@ -114,10 +119,14 @@ function KPI(){
         const titleElement = element.getElementsByClassName("measureTitle")[0];
         titleElement.innerText = data.title || "";
         const valueElement = element.getElementsByClassName("tag-value")[0];
-        valueElement.innerText = data.value || "";
+
+        let measure_type = "";
+        if(/money/i.test(this.type)){
+            measure_type = "$";
+        }
+        valueElement.innerText = `${measure_type}${data.value}` || "";
         const diffElement = element.getElementsByClassName("tag-value-diff")[0];
 
-        this.kpi_style += `z-index:${_itParent.next().value};`;
         //check target in JSON or this.target
         if(data.target){
             //build arrow
@@ -252,6 +261,7 @@ function KPI(){
         }]
     };
 
+
     this.build = function (obj, element){
         let newElement = "";
         if(obj.type === ("svg"||"circle"||"path"||"rect"||"line"||"text")){
@@ -277,31 +287,27 @@ function KPI(){
     this.state = (value)=>{
         switch(value){
             case "safe":
-                return "src/img/check_green.png"
+                return "src/img/check_.png"
             case "warning":
                 return "src/img/check_warning.png"
             case "danger":
-                return "src/img/check_danger.png"
+                return "src/img/error_.png"
             default:
                 return "src/img/check.png"
         }
     };
 
-    this.IndexGenerator = function *(index){
-        const ui = 99999;
-        const uiHeader = 299;
-        //let index = 299;
-        while(true){
-            yield --index;
-        }
-    };
 
     this.process = function(element, data){
         const title = element.getElementsByClassName("ui-tag-expand-content-title")[0];
         title.innerText = data.title || "";
 
         const description = element.getElementsByClassName("ui-tag-expand-content-desc")[0];
-        description.innerText = data.value|| "";
+        let measure_type = "";
+        if(/money/i.test(this.type)){
+            measure_type = "$";
+        }
+        description.innerText = `${measure_type}${data.value}` || "";
 
         const value = parseInt(data.value); 
         const target = parseInt(data.target); 
@@ -330,71 +336,32 @@ function KPI(){
     };
 
     this.tagSize = 92;
-
     this.expandStyleClass = "";
+    this.menu_index = "";
 
-    this.loadTag3 = function(tagId, itParent, itMenu, dataIn){
-/** NEW */
+    this.loadHistory = function(){
 
-        const parentTag = tagId;
-        const data = dataIn;
+        let parentTagSize = (this.tagSize * this.history_data.length)+1;
 
-        const parentTagSize = (this.tagSize * data.length)+1;
-        this.kpi_history_style += `margin-top:-${parentTagSize};z-index:${itMenu.next().value};`;
-        console.log(this.kpi_history_style);
-
-        let container = document.createElement("div"); 
-        container.setAttribute("class", "ui-tag-expand");
-        container.setAttribute("style", `${this.kpi_history_style}`);
-
-        data.forEach(item=>{
-            let element = this.build(this.structure);
-            element = this.process(element, item);
-            container.append(element);
-        });
-
-        const tag= document.getElementById(this.kpi_id);
-        tag.addEventListener('click', ()=>{
-            container.classList.toggle("ui-tag-expand-after");
-        });
-         
-
-        tag.after(container);
-    }
-/** OLD */
-
-
-    this.loadTag = function(){
-
-        const parentTagSize = (this.tagSize * this.history_data.length)+1;
-
-        let expandStyleClass = '.ui-tag-expand{min-height:92px;font-family: "Montserrat";'+
-            'font-size:15px;border-bottom:1px solid rgba(0, 0, 0, 0.048);background:#f9f9f9;'+
-            'margin-top:-'+parentTagSize+'px;position:relative;'+
-            'transition:margin-top 1.8s cubic-bezier(0.23, 1, 0.32, 1);}'+
-            '.ui-tag-expand-after{margin-top:0;}';
-
-        let uiTagStyleTag = document.createElement("style");
-        uiTagStyleTag.innerText = expandStyleClass;
 
         let container = document.createElement("div"); 
         container.setAttribute("class", "ui-tag-expand");
 
-        //each data item
         this.history_data.forEach(data_row=>{
             let cell_element = this.build(this.structure);
             cell_element = this.process(cell_element, data_row);
             container.append(cell_element);
         });
 
-        //const tag= document.getElementById(this.id);
+
         this.element.addEventListener('click', ()=>{
             container.classList.toggle("ui-tag-expand-after");
         });
-        
-        container.setAttribute("style", "z-index:" + _itMenu.next().value);
 
-        document.body.append(uiTagStyleTag);
+        this.menu_index = _itMenu.next().value;
+        container.setAttribute("style", `z-index:${this.menu_index}; margin-top:-${parentTagSize}px;`);
+
+
         this.element.after(container);
 
     };
@@ -403,3 +370,4 @@ function KPI(){
 
 
 
+})();
