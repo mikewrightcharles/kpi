@@ -133,6 +133,20 @@ p{
 }
 
 /* SINGLE CELL */
+/*
+.ui-tag-expand{
+    min-height:92px;
+    font-family: "Montserrat";
+    font-size:15px;
+    border-bottom:1px solid rgba(0, 0, 0, 0.048);
+    background:#f9f9f9;
+    position:relative;
+    transition:margin-top 1.8s cubic-bezier(0.23, 1, 0.32, 1);
+};
+.ui-tag-expand-after{
+    margin-top:0;
+};
+*/
 .ui-tag-expand-item{
     box-sizing: border-box;
     height:92px;

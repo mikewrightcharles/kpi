@@ -48,41 +48,68 @@ let _itParent = IndexGenerator(888);
 let _itMenu = IndexGenerator(299);
 
 const salesKPI = new KPI();
-salesKPI.load("src/js/data_file_1.json");
-
+salesKPI.image = "sales.png";
+salesKPI.load("data_file_4.json");
 
 const visitorsKPI = new KPI();
-visitorsKPI.load("src/js/data_file_2.json");
+visitorsKPI.image = "visitors.png";
+visitorsKPI.load("data_file_2.json");
 
 
 const returnsKPI = new KPI();
-returnsKPI.load("src/js/data_file_3.json");
-
-const testKPI = new KPI();
-testKPI.image = "visitors.png";
-testKPI.start();
-
+returnsKPI.image = "returns3.png";
+returnsKPI.load("data_file_3.json");
 
 function KPI(){
+
+    this.image_root= "src/img/";
+    this.root = "src/data/";
     this.image = "";
-    this.image_root_folder= "./src/img/";
-    this.start = function(){
-        let element = this.build(this.kpiStructure);
-        this.loadKPI("src/js/data_file_4.json");
-        setTimeout(()=>{
-            this.addValues(element);
-        },2000);
+    this.data = [];
+    this.id = "kpi-"+storageID.ids.newID();
+    this.element = "";
+    this.range = 0;
+
+    this.kpi_data = [];
+    this.history_data = [];
+    this.kpi_style = "";
+    this.kpi_history_style = "";
+
+    this.load = function(file){
+        //building kpi tag and returning an element
+
+        //pulling data from file
+        //this.loadKPI(`${this.root}${file}`);
+
+        this.loadFile(`${this.root}${file}`).then(
+            results=>{
+                //data
+                this.kpi_data = results.shift();
+                this.history_data = results;
+
+                //this.addValues(this.element);
+                this.element = this.build(this.kpiStructure);
+                this.element = this.addData(this.element, this.kpi_data);
+                this.element.id = this.id;
+
+                //append to ui
+                let uiBody = document.getElementsByClassName("ui-body")[0];
+                uiBody.appendChild(this.element);
+
+                //load history
+                this.historyElement = this.build(this.structure);
+                this.loadTag();
+
+            }
+        ).catch(error=>{
+            console.log(`Oops, error occured: ${error}`);
+        });
     };
 
-    this.addValues = function(element){
-        let uiBody = document.getElementsByClassName("ui-body")[0];
-        element = this.addKPIData(element, this.data[0]);
-        uiBody.appendChild(element); 
-    };
 
-    this.addKPIData = function(element, data){
+    this.addData = function(element, data){
         const thumbnail = element.querySelector("img");
-        thumbnail.src = `${this.image_root_folder}${this.image}`;
+        thumbnail.src = `${this.image_root}${this.image}`;
 
         const titleElement = element.getElementsByClassName("measureTitle")[0];
         titleElement.innerText = data.title || "";
@@ -90,6 +117,7 @@ function KPI(){
         valueElement.innerText = data.value || "";
         const diffElement = element.getElementsByClassName("tag-value-diff")[0];
 
+        this.kpi_style += `z-index:${_itParent.next().value};`;
         //check target in JSON or this.target
         if(data.target){
             //build arrow
@@ -105,9 +133,12 @@ function KPI(){
 
                 svg.append(arrowElement);
 
-                element.setAttribute("style", "border-left: 2px solid #85c990;");
+                this.kpi_style += "border-left: 2px solid #85c990;";
+                element.setAttribute("style", this.kpi_style);
+
                 diffElement.setAttribute("style", "color:#6b9c37;");
                 diffElement.innerText = `(+${differance})` || "";
+
             }else{
                 let arrowElement = new Arrow(5,5,"red","down");
                 arrowElement.arrow_height = 7;
@@ -116,98 +147,39 @@ function KPI(){
 
                 svg.append(arrowElement);
 
-                element.setAttribute("style", "border-left: 2px solid #de7a7a;");
+                this.kpi_style += "border-left: 2px solid red;";
+                element.setAttribute("style", this.kpi_style);
+
                 diffElement.setAttribute("style", "color:red;");
                 diffElement.innerText = `(${differance})` || "";
             }
         }else{
-            console.log("no target provided");
+            throw("no target provided");
         }
         return element;
     };
 
-    this.process = function(element, data){
-        const title = element.getElementsByClassName("ui-tag-expand-content-title")[0];
-        title.innerText = data.title || "";
-
-        const description = element.getElementsByClassName("ui-tag-expand-content-desc")[0];
-        description.innerText = data.description || "";
-
-        const image = element.querySelector("img");
-        image.src = this.state(data.state);
-
-        return element;
-    };
-
-    this.data = [];
-
-    this.id = "kpi-"+storageID.ids.newID();
-
-    this.loadKPI = function(path){
-        let responseArray = [];
-        loadDataFile(path).then(
-            results=>{
-                this.data = results; 
-            }
-        ).catch(error=>{
-            console.log("Oops, error occured:");
-            console.log(error);
-        });
-        function loadDataFile(url){
-            return new Promise((resolve, reject)=>{
-                const request = new XMLHttpRequest();
-                request.onreadystatechange = function() {
-                    try{
-                        if (this.readyState == 4 && this.status == 200) {
-                            let response = JSON.parse(request.responseText);
-                            for(item in response){
-                                    responseArray.push(response[item]);
-                            }
-                            resolve(responseArray);
+    this.loadFile = function (url){
+        return new Promise((resolve, reject)=>{
+            const responseArray = [];
+            const request = new XMLHttpRequest();
+            request.onreadystatechange = function() {
+                try{
+                    if (this.readyState == 4 && this.status == 200) {
+                        let response = JSON.parse(request.responseText);
+                        for(item in response){
+                                responseArray.push(response[item]);
                         }
-                    }catch(e){
-                        reject(e.message);
+                        resolve(responseArray);
                     }
-                };
-                request.open("GET", url, true);
-                request.send();
-            });
-        }
-    };
-
-    this.load = function(path){
-        let responseArray = [];
-        loadDataFile(path).then(
-            results=>{
-                this.data = results; 
-                this.loadTag(this.id, _itParent, _itMenu, this.data);
-            }
-        ).catch(error=>{
-            console.log("Oops, error occured:");
-            console.log(error);
+                }catch(e){
+                    reject(e.message);
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
         });
-        function loadDataFile(url){
-            return new Promise((resolve, reject)=>{
-                const request = new XMLHttpRequest();
-                request.onreadystatechange = function() {
-                    try{
-                        if (this.readyState == 4 && this.status == 200) {
-                            let response = JSON.parse(request.responseText);
-                            for(item in response){
-                                    responseArray.push(response[item]);
-                            }
-                            resolve(responseArray);
-                        }
-                    }catch(e){
-                        reject(e.message);
-                    }
-                };
-                request.open("GET", url, true);
-                request.send();
-            });
-        }
-    };
-
+    }
 
     this.kpiStructure = {
         type : "div",
@@ -292,7 +264,6 @@ function KPI(){
             for(item in obj.other){
                 newElement.setAttribute(item, obj.other[item]);
             }
-       //     console.log("this object has other attributes");
         }
         if(element){element.append(newElement)}
         if(obj.children){
@@ -306,13 +277,13 @@ function KPI(){
     this.state = (value)=>{
         switch(value){
             case "safe":
-                return "./src/img/check_green.png"
+                return "src/img/check_green.png"
             case "warning":
-                return "./src/img/check_warning.png"
+                return "src/img/check_warning.png"
             case "danger":
-                return "./src/img/check_danger.png"
+                return "src/img/check_danger.png"
             default:
-                return "./src/img/check.png"
+                return "src/img/check.png"
         }
     };
 
@@ -330,10 +301,30 @@ function KPI(){
         title.innerText = data.title || "";
 
         const description = element.getElementsByClassName("ui-tag-expand-content-desc")[0];
-        description.innerText = data.description || "";
+        description.innerText = data.value|| "";
+
+        const value = parseInt(data.value); 
+        const target = parseInt(data.target); 
+        const target_range = target + this.range;
+        const differance = value - target;
 
         const image = element.querySelector("img");
-        image.src = this.state(data.state);
+
+        if(value > target_range){
+            //green
+            image.src = this.state("safe");
+        }else{
+            if(value >= target && value <= target_range){
+                //yellow
+                image.src = this.state("warning");
+            }else{
+                if(value < target){
+                    //red
+                    image.src = this.state("danger");
+                }
+            }
+        }
+
 
         return element;
     };
@@ -342,14 +333,40 @@ function KPI(){
 
     this.expandStyleClass = "";
 
-    this.loadTag = function(tagId, itParent, itMenu, dataIn){
+    this.loadTag3 = function(tagId, itParent, itMenu, dataIn){
+/** NEW */
 
         const parentTag = tagId;
         const data = dataIn;
 
         const parentTagSize = (this.tagSize * data.length)+1;
+        this.kpi_history_style += `margin-top:-${parentTagSize};z-index:${itMenu.next().value};`;
+        console.log(this.kpi_history_style);
 
-        let parentTagClass = "";
+        let container = document.createElement("div"); 
+        container.setAttribute("class", "ui-tag-expand");
+        container.setAttribute("style", `${this.kpi_history_style}`);
+
+        data.forEach(item=>{
+            let element = this.build(this.structure);
+            element = this.process(element, item);
+            container.append(element);
+        });
+
+        const tag= document.getElementById(this.kpi_id);
+        tag.addEventListener('click', ()=>{
+            container.classList.toggle("ui-tag-expand-after");
+        });
+         
+
+        tag.after(container);
+    }
+/** OLD */
+
+
+    this.loadTag = function(){
+
+        const parentTagSize = (this.tagSize * this.history_data.length)+1;
 
         let expandStyleClass = '.ui-tag-expand{min-height:92px;font-family: "Montserrat";'+
             'font-size:15px;border-bottom:1px solid rgba(0, 0, 0, 0.048);background:#f9f9f9;'+
@@ -364,22 +381,22 @@ function KPI(){
         container.setAttribute("class", "ui-tag-expand");
 
         //each data item
-        data.forEach(item=>{
-            let element = this.build(this.structure);
-            element = this.process(element, item);
-            container.append(element);
+        this.history_data.forEach(data_row=>{
+            let cell_element = this.build(this.structure);
+            cell_element = this.process(cell_element, data_row);
+            container.append(cell_element);
         });
 
-        const tag= document.getElementById(parentTag);
-        tag.addEventListener('click', ()=>{
+        //const tag= document.getElementById(this.id);
+        this.element.addEventListener('click', ()=>{
             container.classList.toggle("ui-tag-expand-after");
         });
         
-        tag.setAttribute("style", "z-index:" + itParent.next().value);
-        container.setAttribute("style", "z-index:" + itMenu.next().value);
+        container.setAttribute("style", "z-index:" + _itMenu.next().value);
 
         document.body.append(uiTagStyleTag);
-        tag.after(container);
+        this.element.after(container);
+
     };
     
 }
