@@ -1,7 +1,6 @@
 <!doctype html>
 <head>
     <title>KPI.js</title>
-    <link href="./src/css/ui.css" rel="stylesheet">
 </head>
 
 <body>
@@ -32,8 +31,29 @@
         </div> 
     </div>
 
-<script src="./src/js/svg_tools.js"></script>
+
+
+<link href="./src/css/kpi-ui.css" rel="stylesheet">
+<script src="./src/js/kpi-svg-tools.js"></script>
 <script src="./src/js/kpi.js"></script>
+<script>
+
+const salesKPI = new KPI();
+salesKPI.image = "sales.png";
+salesKPI.type = "money";
+salesKPI.load("data_file_4.json");
+
+const visitorsKPI = new KPI();
+visitorsKPI.image = "visitors.png";
+visitorsKPI.load("data_file_2.json");
+
+const returnsKPI = new KPI();
+returnsKPI.image = "returns3.png";
+returnsKPI.type = "money";
+returnsKPI.load("data_file_3.json");
+
+
+</script>
 
 
 
